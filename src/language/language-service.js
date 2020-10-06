@@ -1,3 +1,5 @@
+const LinkedList = require('../LinkedList');
+
 const LanguageService = {
   getUsersLanguage(db, user_id) {
     return db
@@ -54,6 +56,34 @@ const LanguageService = {
       .where('word.language_id', language_id)
       .andWhere('word.id', head)
       .first();
+  },
+
+  getAllWordsWithHead(db, language_id) {
+    return db
+      .from('word as w')
+      .select(
+        'l.head',
+        'w.id',
+        'w.language_id',
+        'w.original',
+        'w.translation',
+        'w.next',
+        'w.memory_value',
+        'w.correct_count',
+        'w.incorrect_count',
+      )
+      .join('language as l', 'w.language_id', 'l.id');
+  },
+
+  generateWordsList(db, language_id) {
+    const wordList = new LinkedList();
+    LanguageService.getAllWordWithHead(db, language_id)
+      .then(wordArray => {
+        // find head = word where word.id === word.head
+        // recursively look at the word where currentWord.next === word.id
+        // this gives us our sorted array.
+        // wordArray.forEach(word => wordList.insertLast(word));
+      });
   },
 };
 
