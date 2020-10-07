@@ -9,7 +9,7 @@ const LanguageService = {
         'language.name',
         'language.user_id',
         'language.head',
-        'language.total_score',
+        'language.total_score'
       )
       .where('language.user_id', user_id)
       .first();
@@ -26,7 +26,7 @@ const LanguageService = {
         'next',
         'memory_value',
         'correct_count',
-        'incorrect_count',
+        'incorrect_count'
       )
       .where({ language_id });
   },
@@ -34,11 +34,7 @@ const LanguageService = {
   getWord(db, language_id, word_id) {
     return db
       .from('word')
-      .select(
-        'original',
-        'translation',
-        'next',
-      )
+      .select('original', 'translation', 'next')
       .where({ language_id })
       .andWhere({ word_id });
   },
@@ -50,7 +46,7 @@ const LanguageService = {
         'word.original',
         'language.total_score',
         'word.correct_count',
-        'word.incorrect_count',
+        'word.incorrect_count'
       )
       .join('language', 'word.language_id', 'language.id')
       .where('word.language_id', language_id)
@@ -70,20 +66,25 @@ const LanguageService = {
         'w.next',
         'w.memory_value',
         'w.correct_count',
-        'w.incorrect_count',
+        'w.incorrect_count'
       )
-      .join('language as l', 'w.language_id', 'l.id');
+      .join('language as l', 'w.language_id', 'l.id')
+      .where('w.language_id', language_id);
   },
 
   generateWordsList(db, language_id) {
     const wordList = new LinkedList();
-    LanguageService.getAllWordWithHead(db, language_id)
-      .then(wordArray => {
-        // find head = word where word.id === word.head
+    return LanguageService.getAllWordsWithHead(db, language_id).then(
+      (wordArray) => {
+        const headWord = wordArray.find((word) => word.head === word.id);
+        wordList.insertFirst(headWord);
+        /* CONTINUE PROCESSING ARRAY */
         // recursively look at the word where currentWord.next === word.id
         // this gives us our sorted array.
         // wordArray.forEach(word => wordList.insertLast(word));
-      });
+        return wordList;
+      }
+    );
   },
 };
 

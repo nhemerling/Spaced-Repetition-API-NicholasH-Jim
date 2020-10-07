@@ -69,8 +69,19 @@ languageRouter.post('/guess', jsonBodyParser, async (req, res, next) => {
   if (!guess) {
     return res.status(400).json({ error: `Missing 'guess' in request body` });
   }
-
-  res.send('implement me!');
+  try {
+    const words = await LanguageService.generateWordsList(
+      req.app.get('db'),
+      req.language.id
+    );
+    // const words = await LanguageService.getAllWordsWithHead(
+    //   req.app.get('db'),
+    //   req.language.id
+    // );
+    res.json({ words: words });
+  } catch (error) {
+    next(error);
+  }
 });
 
 module.exports = languageRouter;
