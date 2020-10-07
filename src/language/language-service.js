@@ -78,6 +78,9 @@ const LanguageService = {
       (wordArray) => {
         const headWord = wordArray.find((word) => word.head === word.id);
         wordList.insertFirst(headWord);
+
+        this.addNextWordToList(wordArray, headWord, wordList);
+
         /* CONTINUE PROCESSING ARRAY */
         // recursively look at the word where currentWord.next === word.id
         // this gives us our sorted array.
@@ -85,6 +88,32 @@ const LanguageService = {
         return wordList;
       }
     );
+  },
+
+  addNextWordToList(wordArray, currentWord, wordList) {
+    if (currentWord.next === null) {
+      return wordList;
+    }
+    const nextWord = wordArray.find((word) => currentWord.next === word.id);
+    wordList.insertLast(nextWord);
+    return this.addNextWordToList(wordArray, nextWord, wordList);
+  },
+
+  updateWordList(db, totalScore, wordList, languageId) {
+    return db('language')
+      .update({
+        total_score: totalScore,
+        head: wordList.head.value.id,
+      })
+      .where('id', languageId);
+
+    //word updates:
+    //correct_count
+    //incorrect_count
+    //memory_value
+    //next
+
+    //.where('id', wordId)
   },
 };
 

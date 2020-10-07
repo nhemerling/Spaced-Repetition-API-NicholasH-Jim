@@ -74,14 +74,61 @@ languageRouter.post('/guess', jsonBodyParser, async (req, res, next) => {
       req.app.get('db'),
       req.language.id
     );
-    // const words = await LanguageService.getAllWordsWithHead(
-    //   req.app.get('db'),
-    //   req.language.id
-    // );
-    res.json({ words: words });
+
+    let headWord = words.head.value;
+    let nextWord = words.head.next.value;
+
+    let isCorrect = false;
+    let totalScore = req.language.total_score;
+    if (guess === headWord.translation) {
+      //correct
+      isCorrect = true;
+      totalScore++;
+    }
+    const wordList = processAnswer(words, isCorrect);
+    //TODO database update
+    await LanguageService.updateWordList(
+      req.app.get('db'),
+      totalScore,
+      wordList
+    );
+    res.json({
+      nextWord: nextWord.original,
+      wordCorrectCount: nextWord.correct_count,
+      wordIncorrectCount: nextWord.incorrect_count,
+      totalScore: totalScore,
+      answer: headWord.translation,
+      isCorrect: isCorrect,
+    });
+
+    //res.json({ words: words });
   } catch (error) {
     next(error);
   }
+
+  //
+  {
+  }
+  //
 });
 
+function processAnswer(wordList, isCorrect) {
+  //M value
+  const headWord = wordList.head.value;
+  let mVal = headWord.memory_value;
+
+  wordList.remove(headWord);
+
+  if (!isCorrect) {
+    mVal = 1;
+  } else {
+    mVal *= 2;
+  }
+
+  headWord.memory_value = mVal;
+
+  wordList.insertAt(headWord, mVal);
+
+  return wordList;
+}
 module.exports = languageRouter;
