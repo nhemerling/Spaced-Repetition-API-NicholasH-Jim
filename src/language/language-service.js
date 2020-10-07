@@ -99,14 +99,39 @@ const LanguageService = {
     return this.addNextWordToList(wordArray, nextWord, wordList);
   },
 
-  updateWordList(db, totalScore, wordList, languageId) {
-    return db('language')
+  updateWord(db, fieldsToUdate, id) {
+    return db('word')
+      .update(fieldsToUdate)
+      .where({ id });
+  },
+
+  async updateWordList(db, totalScore, wordList, languageId) {
+    await db('language')
       .update({
         total_score: totalScore,
         head: wordList.head.value.id,
       })
       .where('id', languageId);
 
+    let currentNode = wordList.head;
+
+    while (currentNode) {
+      let { correct_count, incorrect_count, memory_value, id } = currentNode.value;
+      let next = null;
+      if (currentNode.next) {
+        next = currentNode.next.value.id;
+      }
+
+      let wordFieldsToUpdate = {
+        correct_count,
+        incorrect_count,
+        memory_value,
+        next,
+      };
+
+      await this.updateWord(db, wordFieldsToUpdate, id);
+      currentNode = currentNode.next;
+    }
     //word updates:
     //correct_count
     //incorrect_count

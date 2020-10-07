@@ -84,14 +84,17 @@ languageRouter.post('/guess', jsonBodyParser, async (req, res, next) => {
       //correct
       isCorrect = true;
       totalScore++;
+
     }
     const wordList = processAnswer(words, isCorrect);
-    //TODO database update
+
     await LanguageService.updateWordList(
       req.app.get('db'),
       totalScore,
-      wordList
+      wordList,
+      req.language.id,
     );
+
     res.json({
       nextWord: nextWord.original,
       wordCorrectCount: nextWord.correct_count,
@@ -105,11 +108,6 @@ languageRouter.post('/guess', jsonBodyParser, async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-
-  //
-  {
-  }
-  //
 });
 
 function processAnswer(wordList, isCorrect) {
@@ -121,8 +119,10 @@ function processAnswer(wordList, isCorrect) {
 
   if (!isCorrect) {
     mVal = 1;
+    headWord.incorrect_count++;
   } else {
     mVal *= 2;
+    headWord.correct_count++;
   }
 
   headWord.memory_value = mVal;
