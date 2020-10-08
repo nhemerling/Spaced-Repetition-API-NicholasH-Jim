@@ -21,8 +21,8 @@ VALUES
 
 INSERT INTO "word" ("id", "language_id", "original", "translation", "next")
 VALUES
-  (1, 1, 'die Frau', 'woman, wife', 2),
-  (2, 1, 'der Mann', 'man, husband', 3),
+  (1, 1, 'die Frau', 'woman', 2),
+  (2, 1, 'der Mann', 'man', 3),
   (3, 1, 'das Kind', 'child', 4),
   (4, 1, 'die Eltern', 'parents', 5),
   (5, 1, 'die Leute', 'people', 6),
@@ -35,14 +35,14 @@ VALUES
   (12, 1, 'die Schule', 'school', 13),
   (13, 1, 'möglich', 'possible', 14),
   (14, 1, 'die Möglichkeit', 'possibility', 15),
-  (15, 1, 'können', 'can, to be able to', 16),
+  (15, 1, 'können', 'can', 16),
   (16, 1, 'lesen', 'to read', 17),
   (17, 1, 'das Buch', 'book', 18),
   (18, 1, 'das Ding', 'thing', 19),
   (19, 1, 'stellen', 'to place', 20),
   (20, 1, 'darstellen', 'to depict', 21),
   (21, 1, 'schreiben', 'to write', 22),
-  (22, 1, 'die Seite', 'side, page', 23),
+  (22, 1, 'die Seite', 'side', 23),
   (23, 1, 'die Sprache', 'language', 24),
   (24, 1, 'viel', 'a lot', 25),
   (25, 1, 'die Bedeutung', 'meaning', null);
